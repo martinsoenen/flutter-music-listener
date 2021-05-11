@@ -45,6 +45,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool isPlaying = false;
+  int musicId = 0;
 
   AudioPlayer player;
   AudioCache playerCache;
@@ -78,35 +79,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // ///////////// I added some cool musics but I did not found the sounds links x) ///////////////
 
-    // Music music = Music(
-    //   artistName: "Röyksopp, Robyn",
-    //   songTitle: "Monument - The Inevitable End Version",
-    //   pictureUrl: "https://m.media-amazon.com/images/I/81FyPjVkcjL._SS500_.jpg",
-    //   urlMusic: "monument-theinevitableendversion.mp3"
-    // );
-
-    // Music music = Music(
-    //   artistName: "Fall Out Boy",
-    //   songTitle: "Thnks Fr Th Mmrs",
-    //   pictureUrl: "https://images-na.ssl-images-amazon.com/images/I/71J%2BQkOmAKL._SL1400_.jpg",
-    //   urlMusic: "falloutboy-thnksfrthmmrs.mp3"
-    // );
-
-    // Music music = Music(
-    //   artistName: "ONE OK ROCK",
-    //   songTitle: "Bombs Away",
-    //   pictureUrl: "https://i1.sndcdn.com/artworks-hqAXLWIRgJGs-0-t500x500.jpg",
-    //   urlMusic: "oneokrock-bombsawway.mp3"
-    // );
-
-    Music music = Music(
-      artistName: "Alan Walker",
-      songTitle: "Sing Me To Sleep",
-      pictureUrl: "https://i1.sndcdn.com/artworks-Uh5O5qVZoBVC-0-t500x500.jpg",
-      urlMusic: "https://paglasongs.com/files/download/id/1714"
-    );
+    List<Music> musicList = [
+      Music(
+          artistName: "Röyksopp, Robyn",
+          songTitle: "Monument - The Inevitable End Version",
+          pictureUrl: "https://m.media-amazon.com/images/I/81FyPjVkcjL._SS500_.jpg",
+          urlMusic: "https://data04.flac.pw/vkp/jpmIuyxbelkJY7d4IkM8dw_1620751614_4__cs9-11v4.vkuseraudio.net/p4/10ff08e0cd9d2b.mp3"
+      ),
+      Music(
+          artistName: "Fall Out Boy",
+          songTitle: "Thnks Fr Th Mmrs",
+          pictureUrl: "https://images-na.ssl-images-amazon.com/images/I/71J%2BQkOmAKL._SL1400_.jpg",
+          urlMusic: "https://data03.flac.pw/vkp/hjk8yaUA8uASb1jZduBjVw_1620751562_3__cs9-4v4.vkuseraudio.net/p1/f93b0440b3b2cd.mp3"
+      ),
+      Music(
+          artistName: "ONE OK ROCK",
+          songTitle: "Bombs Away",
+          pictureUrl: "https://i1.sndcdn.com/artworks-hqAXLWIRgJGs-0-t500x500.jpg",
+          urlMusic: "https://data03.flac.pw/vkp/av_wC8c3yzt9S6T3ZyPVqw_1620750058_3__cs9-17v4.vkuseraudio.net/p1/bb9132a702d920.mp3"
+      ),
+      Music(
+          artistName: "Alan Walker",
+          songTitle: "Sing Me To Sleep",
+          pictureUrl: "https://i1.sndcdn.com/artworks-Uh5O5qVZoBVC-0-t500x500.jpg",
+          urlMusic: "https://paglasongs.com/files/download/id/1714"
+      ),
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -122,7 +121,7 @@ class _HomePageState extends State<HomePage> {
               width: widget.cardImageSize,
               child: Card(
                 child: Image.network(
-                  music.pictureUrl,
+                  musicList[musicId].pictureUrl,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -134,11 +133,14 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(4),
-                      child: Text(music.songTitle),
+                      child: Text(
+                        musicList[musicId].songTitle,
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(4),
-                      child: Text(music.artistName),
+                      child: Text(musicList[musicId].artistName),
                     ),
                   ],
                 ),
@@ -149,7 +151,20 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       IconButton(
                           icon: Icon(Icons.skip_previous),
-                          onPressed: () => {}),
+                          onPressed: () => {
+                            if (musicId > 0) {
+                              if (this.isPlaying) {
+                                player.stop(),
+                                setState(() {
+                                  this.isPlaying = !this.isPlaying;
+                                }),
+                              },
+                              setState(() {
+                                musicId = musicId - 1;
+                              }),
+                            }
+                          }
+                      ),
                       SizedBox(
                         height: 20,
                       ),
@@ -157,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                           icon: this.isPlaying ? Icon(Icons.pause) : Icon(Icons.play_arrow) ,
                           onPressed: () {
                             if (!this.isPlaying) {
-                              player.play(music.urlMusic);
+                              player.play(musicList[musicId].urlMusic);
                             } else {
                               player.pause();
                             }
@@ -170,7 +185,20 @@ class _HomePageState extends State<HomePage> {
                       ),
                       IconButton(
                           icon: Icon(Icons.skip_next),
-                          onPressed: () => {}),
+                          onPressed: () => {
+                            if (musicId < musicList.length - 1) {
+                              if (this.isPlaying) {
+                                player.stop(),
+                                setState(() {
+                                  this.isPlaying = !this.isPlaying;
+                                }),
+                              },
+                              setState(() {
+                                musicId = musicId + 1;
+                              }),
+                            }
+                          }
+                      ),
                     ],
                   ),
                 ),
